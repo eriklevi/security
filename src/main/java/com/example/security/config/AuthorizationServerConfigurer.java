@@ -7,13 +7,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 
 @Configuration
-@EnableAuthorizationServer
 public class AuthorizationServerConfigurer extends AuthorizationServerConfigurerAdapter {
     @Value("${security.jwt.client-id}")
     private String clientId;
@@ -49,9 +47,14 @@ public class AuthorizationServerConfigurer extends AuthorizationServerConfigurer
         this.accessTokenConverter = accessTokenConverter;
     }
 
+    /**
+     * This method defines which clients applications are registered with the authentication service.
+     * @param clients
+     * @throws Exception
+     */
     @Override
-    public void configure(ClientDetailsServiceConfigurer configurer) throws Exception {
-        configurer
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        clients
                 .inMemory()
                 .withClient(clientId)
                 .secret(clientSecret)
@@ -60,6 +63,13 @@ public class AuthorizationServerConfigurer extends AuthorizationServerConfigurer
                 .resourceIds(resourceIds);
     }
 
+    /**
+     * This method defines the different components used within the AuthenticationServerConfigurer.
+     * This code is telling spring to use the default authentication manager and user details service
+     * that comes up with spring.
+     * @param endpoints
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
